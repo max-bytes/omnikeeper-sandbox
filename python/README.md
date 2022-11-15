@@ -1,5 +1,9 @@
 # omnikeeper-sandbox-python
 
+## Requirements
+
+* Python 3.10
+
 ## Development Setup
 
 ### prerequisites
@@ -10,7 +14,7 @@
 ### create virtual environment (optional)
 
 ```bash
-virtualenv -p python3 venv
+python3.10 -m venv venv
 ```
 
 ### enter virtual environment (optional)
@@ -23,6 +27,12 @@ source ./venv/bin/activate
 
 ```bash
 pip3 install -r requirements.txt
+```
+
+### Use local client-library
+
+```bash
+pip install -e ../../omnikeeper-client-python
 ```
 
 ## Run
