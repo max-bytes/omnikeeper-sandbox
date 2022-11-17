@@ -13,21 +13,23 @@ def main(argv):
     access_token = get_access_token(config)
     client = create_graphql_client("%s/graphql" % config['omnikeeper_url'], access_token)
 
+    target_layer = "testlayer"
+
     # create layer, if it does not exist and set layer data
-    create_layer(client, "testlayer")
-    upsert_layerdata(client, "testlayer", "description", hexString2RGBColor("#FF00FF"))
+    create_layer(client, target_layer)
+    upsert_layerdata(client, target_layer, "description", hexString2RGBColor("#FF00FF"))
 
     # empty layer, if anything is inside
-    truncate_layer(client, "testlayer")
+    truncate_layer(client, target_layer)
 
     # create a single CI with a name attribute
-    ciid1 = create_ci(client, "test-ci01", "testlayer")
+    ciid1 = create_ci(client, "test-ci01", target_layer)
 
     # insert an attribute
-    mutate_cis(client, "testlayer", ["testlayer"], [build_graphQL_InsertCIAttributeInputType(ciid1, "test_attribute_1", "test_value_1")])
+    mutate_cis(client, target_layer, [target_layer], [build_graphQL_InsertCIAttributeInputType(ciid1, "test_attribute_1", "test_value_1")])
 
     # read CI
-    ci_attributes = get_ci_attributes(client, ["testlayer"], [ciid1])
+    ci_attributes = get_ci_attributes(client, [target_layer], [ciid1])
 
     print(ci_attributes)
 
