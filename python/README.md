@@ -9,7 +9,7 @@
 ### prerequisites
 
 * a running omnikeeper-stack: <https://github.com/max-bytes/omnikeeper-stack>
-* omnikeeper-client-python next to root folder (relative from this README file: ../../omnikeeper-client-python)
+* recommended: omnikeeper-client-python next to root folder (relative from this README file: ../../omnikeeper-client-python)
 
 ### create virtual environment (optional)
 
