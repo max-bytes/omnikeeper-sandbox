@@ -9,7 +9,7 @@ from typing import (
 )
 
 def bulk_replace_planned_patchruns(client: Client, target_layer: str, target_schedule_group: str, runs: list[Dict[str, Any]]):
-    execute_graphql(client, gql("""
+  response = execute_graphql(client, gql("""
 mutation($layers: [String]!, $writeLayer: String!, $targetScheduleGroup: String!, $input: [TE_Upsert_Input_patchmgnt__planned_patchrun]!) {
   bulkReplaceByFilter_patchmgnt__planned_patchrun(
     layers: $layers
@@ -18,7 +18,24 @@ mutation($layers: [String]!, $writeLayer: String!, $targetScheduleGroup: String!
     input: $input
     idAttributes: ["scheduleGroup", "targetDate"]
     idRelations: ["patchwindowID"]
-  )
+  ) {
+    success
+    isNoOp
+    changeset {
+      ciAttributes {
+        ciid
+        attributes {
+          name
+        }
+      }
+      removedCIAttributes {
+        ciid
+        attributes {
+          name
+        }
+      }
+    }
+  }
 }
     """), dict(
         layers = [target_layer],
@@ -26,6 +43,7 @@ mutation($layers: [String]!, $writeLayer: String!, $targetScheduleGroup: String!
         targetScheduleGroup = target_schedule_group,
         input = runs
     ))
+  return response['bulkReplaceByFilter_patchmgnt__planned_patchrun']
 
 def get_planned_patchruns(client: Client, target_layer: str):
     query = gql("""
@@ -169,12 +187,15 @@ mutation {
     pp.pprint(query_results2)
 
     # update first set of planned patchruns
-    bulk_replace_planned_patchruns(client, target_layer, "schedule_group_1", [
+    response = bulk_replace_planned_patchruns(client, target_layer, "schedule_group_1", [
             # {"scheduleGroup": "schedule_group_1", "startTime": "2022-11-17T00:00:00Z", "endTime": "2022-11-17T12:00:00Z", "targetDate": "2022-11-17", "patchwindowID": [str(test_patchwindow_ciid)]}, <- removed
             {"scheduleGroup": "schedule_group_1", "startTime": "2022-11-24T00:00:00Z", "endTime": "2022-11-25T09:30:00Z", "targetDate": "2022-11-24", "patchwindowID": [str(test_patchwindow_ciid)]}, # <- unchanged
             {"scheduleGroup": "schedule_group_1", "startTime": "2022-11-25T00:00:00Z", "endTime": "2022-11-26T10:30:00Z", "targetDate": "2022-11-25", "patchwindowID": [str(test_patchwindow_ciid)]}, # <- changed
             {"scheduleGroup": "schedule_group_1", "startTime": "2022-11-30T00:00:00Z", "endTime": "2022-11-30T09:30:00Z", "targetDate": "2022-11-30", "patchwindowID": [str(test_patchwindow_ciid)]}, # <- new
     ])
+
+    print("Response of update of first set:")
+    pp.pprint(response)
 
     query_results3 = get_planned_patchruns(client, target_layer)
     print("State after update of first set:")
