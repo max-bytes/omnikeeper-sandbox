@@ -1,0 +1,10 @@
+log_level: INFO
+omnikeeper:
+  url: [setme]
+  timeout_seconds: 90
+oauth:
+  client_id: [setme]
+  username: [setme]
+  password: [setme]
+  omnikeeper_url: [setme] # [keycloak-url]/auth/realms/acme
+
