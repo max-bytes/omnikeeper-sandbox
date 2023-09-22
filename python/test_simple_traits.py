@@ -77,11 +77,16 @@ def main():
     logger = create_logger(logging.getLevelName(config['log_level']))
 
     access_token = get_access_token(config['oauth'])
-
     client = create_graphql_client(f"{config['omnikeeper']['url']}/graphql", access_token)
+    # alternative: auth-less setup
+    # client = create_graphql_client(f"{config['omnikeeper']['url']}/graphql")
 
     # ensure our test trait exists
     upsert_test_trait(client)
+
+    # our test trait has two attributes
+    # * id: numeric
+    # * array: array of strings/text
 
     # create a completely new data set (trait "test")
     # note that we don't supply any UUIDs/CIIDs here

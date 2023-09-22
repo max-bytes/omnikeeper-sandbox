@@ -14,7 +14,7 @@ idna==2.10
 multidict==6.0.2
 numpy==1.25.2
 oauthlib==3.2.0
-omnikeeper-client==3.2.0
+omnikeeper-client==3.3.0
 pandas==2.1.0
 python-dateutil==2.8.2
 python-json-logger==2.0.2
