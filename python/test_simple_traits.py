@@ -83,16 +83,8 @@ def main():
     # ensure our test trait exists
     upsert_test_trait(client)
 
-    # test = simple_traits.get_all(client, trait_name="test", layers=["test"])
-    # print (test)
-
-    # hosts = simple_traits.get_all(client, trait_name="tsa_cmdb.host", layers=["tsa_cmdb"])
-    # print (hosts)
-    
-    # host_interfaces = simple_traits.get_relation(client, trait_name="tsa_cmdb.host", relation_name="interfaces", layers=["tsa_cmdb"])
-    # print (host_interfaces)
-
     # create a completely new data set (trait "test")
+    # note that we don't supply any UUIDs/CIIDs here
     df_init = pd.DataFrame.from_records([
         {"id": 1, "array": ["a", "b"]},
         {"id": 3, "array": ["c", "d"]}
@@ -100,10 +92,11 @@ def main():
     print("Initial dataframe:")
     print(df_init)
     print("")
-    # insert that new data, this will also delete all old trait entities
+    # insert that new data, this will also delete all old trait entities, if there are any
     simple_traits.bulk_replace(client, trait_name="test", input=df_init, id_attributes=["id"], id_relations=[], write_layer="test", filter={})
 
-    # get that data back out from omnikeeper, use it
+    # get that data back out from omnikeeper
+    # what we get back has an index that's the CIID of the corresponding CI
     df_work = simple_traits.get_all(client, trait_name="test", layers=["test"])
 
     # change things in the returned data
@@ -125,6 +118,15 @@ def main():
     print("Final dataframe:")
     print (df_final)
     print("")
+
+    # check that work- and final-dataframe are equal
+    print(f"Are equal: {df_final.equals(df_work)}") 
+    
+    # other samples:
+    # hosts = simple_traits.get_all(client, trait_name="host", layers=["cmdb"])
+    # print (hosts)
+    # host_interfaces = simple_traits.get_relation(client, trait_name="cmdb.host", relation_name="interfaces", layers=["cmdb"])
+    # print (host_interfaces)
 
 if __name__ == "__main__":
     main()
