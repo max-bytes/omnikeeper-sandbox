@@ -30,52 +30,48 @@ def parse_args():
 def upsert_test_trait(client: Client):
     # create trait
     execute_graphql(client, gql("""
-mutation {
-  manage_upsertRecursiveTrait(
-    trait: {
-      id: "test"
-      requiredAttributes: [
-        {
-          identifier:"id",
-          template: {
-            name:"test.id",
-            type:INTEGER,
-            isArray:false,
-            isID:false,
-            valueConstraints:[]
-          }
-        },
-        {
-          identifier:"array",
-          template: {
-            name:"test.array",
-            type:TEXT,
-            isArray:true,
-            isID:false,
-            valueConstraints:[]
-          }
+    mutation {
+      manage_upsertRecursiveTrait(
+        trait: {
+          id: "test"
+          requiredAttributes: [
+            {
+              identifier:"id",
+              template: {
+                name:"test.id",
+                type:INTEGER,
+                isArray:false,
+                isID:false,
+                valueConstraints:[]
+              }
+            },
+            {
+              identifier:"array",
+              template: {
+                name:"test.array",
+                type:TEXT,
+                isArray:true,
+                isID:false,
+                valueConstraints:[]
+              }
+            }
+          ]
+          optionalAttributes: []
+          optionalRelations: []
+          requiredTraits: []
         }
-      ]
-      optionalAttributes: []
-      optionalRelations: []
-      requiredTraits: []
+      ) {
+        id
+      }
     }
-  ) {
-    id
-  }
-}
     """))
 
 def main():
     args = parse_args()
     config = get_config(args.config_file)
-
-    if 'log_level' not in config:
-        print('Please provide the logging level in configuration file.')
-        exit(1)
-
     logger = create_logger(logging.getLevelName(config['log_level']))
 
+    # get access token and create graphql client
     access_token = get_access_token(config['oauth'])
     client = create_graphql_client(f"{config['omnikeeper']['url']}/graphql", access_token)
     # alternative: auth-less setup
